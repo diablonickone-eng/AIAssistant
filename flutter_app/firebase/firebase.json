@@ -1,0 +1,6 @@
+{
+  "projectId": "your-firebase-project-id",
+  "appId": "your-app-id",
+  "apiKey": "your-api-key",
+  "messagingSenderId": "your-sender-id"
+}

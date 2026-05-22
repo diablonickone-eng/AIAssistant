@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String      @map("password_hash")
+  name         String
+  createdAt    DateTime    @default(now()) @map("created_at")
+  schedules    Schedule[]
+  tasks        Task[]
+  reminders    Reminder[]
+  aiHistories  AiHistory[]
+
+  @@map("users")
+}
+
+model Schedule {
+  id              String     @id @default(uuid())
+  userId          String     @map("user_id")
+  title           String
+  description     String?
+  date            DateTime
+  startTime       String     @map("start_time")
+  endTime         String     @map("end_time")
+  isRecurring     Boolean    @default(false) @map("is_recurring")
+  recurringRule   String?    @map("recurring_rule")
+  calendarEventId String?    @map("calendar_event_id")
+  status          String     @default("pending") // pending | done | cancelled
+  createdAt       DateTime   @default(now()) @map("created_at")
+  user            User       @relation(fields: [userId], references: [id])
+  reminders       Reminder[]
+
+  @@map("schedules")
+}
+
+model Task {
+  id        String     @id @default(uuid())
+  userId    String     @map("user_id")
+  title     String
+  dueDate   DateTime?  @map("due_date")
+  priority  String     @default("medium") // low | medium | high
+  status    String     @default("pending") // pending | done
+  notes     String?
+  createdAt DateTime   @default(now()) @map("created_at")
+  user      User       @relation(fields: [userId], references: [id])
+  reminders Reminder[]
+
+  @@map("tasks")
+}
+
+model Reminder {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  scheduleId String?   @map("schedule_id")
+  taskId     String?   @map("task_id")
+  remindAt   DateTime  @map("remind_at")
+  isSent     Boolean   @default(false) @map("is_sent")
+  type       String    @default("notification") // notification | push | calendar
+  user       User      @relation(fields: [userId], references: [id])
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  task       Task?     @relation(fields: [taskId], references: [id])
+
+  @@map("reminders")
+}
+
+model AiHistory {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  rawInput        String   @map("raw_input") @db.Text
+  parsedOutput    String?  @map("parsed_output") @db.Text
+  userCorrection  String?  @map("user_correction")
+  createdAt       DateTime @default(now()) @map("created_at")
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@map("ai_history")
+}

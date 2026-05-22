@@ -51,10 +51,10 @@
 | **Notifikasi** | flutter_local_notifications + Firebase Cloud Messaging |
 | **Calendar Sync** | googleapis (Google Calendar), device_calendar plugin |
 | **Secure Storage** | flutter_secure_storage |
-| **Backend** | Node.js + Express (atau NestJS) |
-| **Database** | PostgreSQL + Redis (cache + queue notif) |
-| **AI / LLM** | OpenAI API (GPT-4o) |
-| **Auth** | JWT + Firebase Auth (opsional) |
+| **Backend** | Node.js + Express |
+| **Database** | Supabase (PostgreSQL) + Redis (cache + queue notif) |
+| **AI / LLM** | OpenRouter (DeepSeek Chat V3, fallback ke model free lain) |
+| **Auth** | JWT |
 | **Push** | Firebase Cloud Messaging |
 | **Deploy** | Docker + VPS / Railway / Render |
 
@@ -195,7 +195,35 @@ ai_assistant/
 | **Keamanan API key LLM** | Hanya di backend, tidak pernah di Flutter app |
 | **Cost LLM** | Limit per user, cache hasil parsing yang sama |
 
-## 8. Estimasi Timeline
+## 8. Progress Terkini (22 Mei 2026)
+
+### Phase 1 — MVP ✅ (Code selesai, menunggu integrasi & deploy)
+
+| Item | Status | Keterangan |
+|------|--------|------------|
+| **Backend — Auth (register/login JWT)** | ✅ Selesai | `controllers/authController.js` + Prisma |
+| **Backend — Schedule CRUD** | ✅ Selesai | + auto-create reminder 15 menit |
+| **Backend — Task CRUD** | ✅ Selesai | + endpoint ringkasan pending |
+| **Backend — AI Parse (NLP → JSON)** | ✅ Selesai | OpenRouter via DeepSeek Chat V3, fallback parser |
+| **Backend — Reminder** | ✅ Selesai | CRUD + auto-generated dari schedule |
+| **Backend — Database Supabase** | ✅ Selesai | 5 tabel (users, schedules, tasks, reminders, ai_history) via Prisma |
+| **Flutter — Auth screen (login/register)** | ✅ Selesai | Masih mock (belum connect ke backend) |
+| **Flutter — Dashboard** | ✅ Selesai | Grid menu + ringkasan tugas |
+| **Flutter — Calendar View** | ✅ Selesai | table_calendar harian/mingguan/bulanan |
+| **Flutter — Task List** | ✅ Selesai | Add/delete/checkbox done |
+| **Flutter — AI Chat (NLP input)** | ✅ Selesai | Chat UI + placeholder API call |
+| **Flutter — Notification Service** | ✅ Selesai | flutter_local_notifications + FCM setup |
+| **Flutter — Background Service** | ✅ Selesai | Workmanager periodic 15 menit |
+| **Integrasi Flutter → Backend** | ⏳ Pending | Login, schedule, task, AI chat masih mock |
+| **Push Notification (FCM)** | ⏳ Pending | Butuh Firebase config aktif |
+| **Deploy Backend** | ⏳ Pending | Butuh VPS/Railway/Render |
+
+### Perubahan dari Roadmap Awal
+- **OpenAI → OpenRouter** — biaya $0 (pakai free model DeepSeek Chat V3)
+- **PostgreSQL lokal → Supabase** — managed DB + pooler
+- **NestJS → Express** — lebih ringan untuk MVP
+
+## 9. Estimasi Timeline
 
 | Phase | Durasi | Output |
 |-------|--------|--------|
